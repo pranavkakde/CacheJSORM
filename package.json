@@ -1,0 +1,37 @@
+{
+  "name": "cachejsorm",
+  "version": "1.0.0",
+  "description": "This is a JavaScript ORM supporting Caching",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "orm",
+    "javsscript"
+  ],
+  "author": "pranav kakde",
+  "license": "MIT",
+  "devDependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "gulp": "^4.0.0",
+    "gulp-zip": "^4.2.0",
+    "mongoose": "^5.3.9",
+    "morgan": "^1.9.1",
+    "msnodesqlv8": "^0.6.12",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.10",
+    "rotating-file-stream": "^1.4.0",
+    "serve-static": "^1.13.2"
+  },
+  "dependencies": {
+    "mssql": "^5.0.4"
+  }
+}
