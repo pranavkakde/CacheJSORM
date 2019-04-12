@@ -23,16 +23,12 @@ var accessLogStream = rfs('access.log', {
 app.use(morgan('combined', { stream: accessLogStream }))
 
 var config={
-    driverType: "mssql",
-    //server:'testdashboard.c2dzphylzivu.ap-southeast-2.rds.amazonaws.com',
-    server:'LAPTOP-92EUUT9O\\SQLEXPRESS',
-    //database: 'DashboardDB',
-    database:'ServiceDB',
-    username:'nodeuser',
-    password: 'nodeuser',
+    driverType: "mssql",    
+    server:'servername',
+    database:'OrderDB',
+    username:'username',
+    password: 'pass',
     cacheDuration: 10,
-    //username: 'pranav',
-    //password: 'pranavkakde',
     driverOptions:{            
         trustedConnection: false
     }
