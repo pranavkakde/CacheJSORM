@@ -120,6 +120,17 @@ class TableMapping extends DriverManager{
             }
         })
     }
+    //create join functions
+    join(options, callback){
+        var query = this.analytics.aggregate(options);
+        super.runSQL(query,function(err,data){
+            if (err){
+                callback(err)
+            }else{
+                callback(data)
+            }
+        })
+    }
 }
 
 module.exports=TableMapping;
