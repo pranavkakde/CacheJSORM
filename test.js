@@ -3,17 +3,13 @@ var customerModel = require('./testModel/customerModel')
 
 var config={
     driverType: "mssql",
-    //server:'testdashboard.c2dzphylzivu.ap-southeast-2.rds.amazonaws.com',
-    server:'LAPTOP-92EUUT9O\\SQLEXPRESS',
-    //database: 'DashboardDB',
+    server:'hostname',
     database:'OrderDB',
     username:'nodeuser',
     password: 'nodeuser',
     cacheDuration: 0,
-    //username: 'pranav',
-    //password: 'pranavkakde',
     driverOptions:{            
-        trustedConnection: true
+        trustedConnection: false
     }
 }
 
