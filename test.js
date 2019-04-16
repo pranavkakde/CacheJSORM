@@ -2,22 +2,19 @@ var orderModel = require('./testModel/orderModel')
 var customerModel = require('./testModel/customerModel')
 
 var config={
-    driverType: "mssql",
-    //server:'testdashboard.c2dzphylzivu.ap-southeast-2.rds.amazonaws.com',
-    server:'LAPTOP-92EUUT9O\\SQLEXPRESS',
-    //database: 'DashboardDB',
+    driverType: "mssql",    
+    server:'servername',
     database:'OrderDB',
-    username:'nodeuser',
-    password: 'nodeuser',
-    cacheDuration: 0,
-    //username: 'pranav',
-    //password: 'pranavkakde',
+    username:'username',
+    password: 'pass',
+    cacheDuration: 10,
     driverOptions:{            
         trustedConnection: true
     }
 }
 
 orderModel.setConfig(config);
+
 orderModel.find({OrderNumber: '542477'},function(err,data){
     if(err){
         console.log(err);
@@ -27,42 +24,60 @@ orderModel.find({OrderNumber: '542477'},function(err,data){
 });
 orderModel.join(
     {
-        _join: {
+        _join: [{
             _localkey: 'customerid',
             _foreignkey: 'id',
             _foreignTable: 'dbo.[customer]',
-            _filter: [
-                {
-                    _field:[{_name:'_foreign.id'}],
-                    _eq:'85'
-                },
-                {
-                    _field:[{_name:'_local.TotalAmount'}],
-                    _gteq:'400'
-                }
-            ],
-            //TBD
-            /*_max:{
-                _field: 'salary',
-                _alias: 'MaxSalary',
-                _group: _localkey.deptid
+            _type: 'inner',
+            _name: '$join1'
+        },
+        {
+            _localkey: 'id',
+            _foreignkey: 'OrderId',
+            _foreignTable: 'dbo.[OrderItem]',
+            _type: 'left',
+            _name: '$join2'
+        }],
+        _field: 
+                [
+                    {
+                        _name: '_local.OrderNumber',
+                        _alias: 'OrderNum',
+                    },
+                    {
+                        _name: '_foreign.FirstName',
+                        _alias: 'CustomerName',
+                        _join: '$join1'
+                    },
+                    {
+                        _name: '_foreign.all',
+                        _join: '$join2'
+                    }
+                ],
+        _filter: [
+            {
+                _field:[{_name:'_foreign.id', _join: '$join1'}],
+                _eq:'85'
             },
-            _order: {
-                _by: '_max_field',
-                _mode: 'desc'
-            },*/
+            {
+                _field:[{_name:'_local.TotalAmount'}],
+                _gteq:'400'
+            }
+        ],
+        _order: {
             _field: 
                 [
                     {
                         _name: '_local.OrderNumber',
-                        _alias: 'OrderNum'
                     },
                     {
                         _name: '_foreign.FirstName',
-                        _alias: 'CustomerName'
+                        _join: '$join1'
                     }
-                ]
-        }
+                ],
+            _mode: 'desc'
+        },
+        _top:{_row:2}
     },
     function(err,data){
         if(err){
@@ -74,19 +89,15 @@ orderModel.join(
 )
 orderModel.aggregate(
     {
+        _sum:{
+            _field: 'TotalAmount',
+            _alias: 'MaxAmount'
+        },
         _group: {
                 _by: {
                     _field: [{_name:'customerId'}]
                 },
-                _sum:{
-                    _field: 'TotalAmount',
-                    _alias: 'MaxAmount'
-                },
                 _having:{
-                    /*_max: {
-                        _field: 'TotalAmount'
-                    },
-                    _gt: '10'*/
                     _field:[{_name:'customerId'}],
                     _eq:'10'
                 }
@@ -102,13 +113,13 @@ orderModel.aggregate(
 
 orderModel.aggregate(
     {
+        _sum:{
+            _field: 'TotalAmount',
+            _alias: 'MaxAmount'
+        },
         _group: {
                 _by: {
                     _field: [{_name:'customerId'}]
-                },
-                _sum:{
-                    _field: 'TotalAmount',
-                    _alias: 'MaxAmount'
                 },
                 _having:{
                     _max: {

@@ -16,75 +16,132 @@ class Analytics{
     //main wrapper function
     aggregate(options){
         var retVal='';
+        var selList = '';
+        var joinclause = '';
+        var whereclause ='';
+        var orderclause = '';
+        var toprow='';
+        var groupclause='';
         this.options=options;
-        Object.getOwnPropertyNames(options).map(element=>{
-            retVal = this.setupSQLClause(element);
-        })
-        //console.log(retVal)
-        return retVal;
-    }
-    setupSQLClause(clausename){
         
-        switch (clausename){
-            case '_group':
-                return this.getGroupBy(this.options._group);
-            case '_join':
-                return this.getJoinSQL(this.options._join);
-            default:
-            //do nothing
+        var orderby = '';
+        var sqlString = '';
+        Object.getOwnPropertyNames(options).map(clausename=>{
+            //retVal = this.setupSQLClause(element);
+            if (this.isAggregateFunc(clausename)){
+                selList = this.getAggregateFunction(clausename, this.options);
+            }else{
+                switch (clausename){
+                    case '_group':
+                        groupclause = this.getGroupBy(this.options);
+                        break;
+                    case '_join':
+                        joinclause = this.getJoinSQL(this.options._join);
+                        break;
+                    case '_order':
+                        orderclause = this.getOrderBy(this.options);
+                        break;
+                    case '_field':
+                        if(!this.options._join)
+                            selList += this.getFieldNames(this.options._field);
+                        else
+                            selList += this.getFieldNames(this.options._field,this.options._join._foreignTable);
+                        break;
+                    case '_filter':
+                        if(!this.options._join)
+                            whereclause += this.getFilter(this.options._filter);
+                        else
+                            whereclause += this.getFilter(this.options._filter,this.options._join._foreignTable);
+                    case '_top':
+                        toprow = ` top ${this.options._top._row} `
+                        break;
+                    case '_limit':
+    
+                        break;
+                    default:
+                        throw(`option ${clausename} is not configured `)
+                    //do nothing
+                }
+            }
+        })
+        if (whereclause!=''){
+            whereclause = ` Where ${whereclause}`
         }
+        console.log('SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause)
+        return 'SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause
+        //console.log(sqlString + ' ' + orderby)
+        //return sqlString + ' ' + orderby;
+    }
+    
+    getOrderBy(allOptions){
+        var orderOptions = allOptions._order;
+        var orderStmt='';
+        var fieldList='';
+        try{
+            Object.getOwnPropertyNames(orderOptions).map(element=>{
+                if (this.isAggregateFunc(element)){
+                    fieldList = this.getAggregateFunction(element, orderOptions);
+                }else{
+                    if(element==='_field'){
+                        fieldList = this.getFieldNames(orderOptions._field,allOptions._join._foreignTable);
+                    }
+                }
+            })
+            orderStmt = 'Order By ' + fieldList + ' ' + orderOptions._mode
+        }catch(e){
+            throw (e);
+        }
+        return orderStmt;
     }
     getJoinSQL(joinOptions){
-        var fieldList='';
-        var where='';
         var joinOn = '';
-        var selField = '';
-        var tabList = '';
+        var joinType='';
         try{
-            Object.getOwnPropertyNames(joinOptions).map(element=>{
-                /*if (this.isAggregateFunc(element)){
-                    selField = 'select ' + this.getAggregateFunction(element, groupByOptions) + ' from ' + this.tableName;
-                }else{*/
-                    switch(element){
-                        case '_field':
-                            fieldList = this.getFieldNames(joinOptions._field,joinOptions._foreignTable);
-                            break;
-                        case '_localkey':
-                            joinOn = this.tableName +'.' + joinOptions._localkey + '=' + joinOn;
-                            break;
-                        case '_foreignkey':
-                            joinOn =  joinOn + joinOptions._foreignTable + '.' + joinOptions._foreignkey
-                            break;
-                        case '_foreignTable':
-                            tabList =  joinOptions._foreignTable + ", " + this.tableName
-                            break;
-                        case '_filter':
-                            joinOptions._filter.forEach(ele=>{
-                                where = where + 
-                                 this.getJoinWhere(ele,joinOptions._foreignTable) + ' and '
-                            });
-                        default:
-                            //nothing
-                    }
-                //}
+            joinOptions.forEach(element=>{
+                switch(element._type){
+                    case 'left':
+                        joinType='LEFT';
+                        break;
+                    case 'right':
+                        joinType='RIGHT';
+                        break;
+                    case 'outer':
+                        joinType='OUTER';
+                        break;
+                    case 'inner':
+                        joinType='INNER';
+                        break;
+                    default:
+                        throw("join type is incorrect")
+                }
+                joinOn +=  ` ${joinType} JOIN ${element._foreignTable}  ON ` + this.tableName +'.' + element._localkey + '=' + element._foreignTable + '.' + element._foreignkey
             })
         }catch(e){
             throw (e);
         }
+        return  joinOn
+    }
+    getFilter(filterOptions,foreignTable){
+        var where='';
+        
+        filterOptions.forEach(ele=>{
+            where = where + this.getJoinWhere(ele,foreignTable) + ' and '
+        });
         where = where.substr(0,where.length-5)
-        return 'select ' + fieldList  + ' from ' + this.tableName + ' JOIN ' + joinOptions._foreignTable + ' ON ' + joinOn +  ' where ' + where 
+        return where;
     }
     getJoinWhere(options,foreignTable){
         var fieldName = '';
         var condition = '';
+        
         Object.getOwnPropertyNames(options).map(element=>{
+            
             if(this.isField(element)){
                 fieldName = this.getFieldNames(options._field, foreignTable)
             }else{
                 condition = condition  + this.getCondition(element,options)
             }
         });
-             
         return fieldName + condition;
     }
     getCondition(element,options){
@@ -108,37 +165,37 @@ class Analytics{
         }
         return condition;
     }
-    getGroupBy(groupByOptions){
+    getGroupBy(allOptions){
         var gby='';
         var have='';
-        var selField = '';
+        var groupByOptions = allOptions._group;
         try{
             Object.getOwnPropertyNames(groupByOptions).map(element=>{
-                if (this.isAggregateFunc(element)){
-                    selField = 'select ' + this.getAggregateFunction(element, groupByOptions) + ' from ' + this.tableName;
-                }else{
-                    switch(element){
-                        case '_by':
+                switch(element){
+                    case '_by':
+                        if (allOptions._join){
+                            gby= ' group by ' + this.getFieldNames(groupByOptions._by._field, allOptions._join._foreignTable);
+                        }else{
                             gby= ' group by ' + this.getFieldNames(groupByOptions._by._field);
-                            break;
-                        case '_having':
-                            have = this.getHaving(groupByOptions._having);
-                            break;
-                        default:
-                            //nothing
-                    }
+                        }
+                        
+                        break;
+                    case '_having':
+                        have = this.getHaving(groupByOptions._having);
+                        break;
+                    default:
+                        //nothing
                 }
             })
         }catch(e){
             throw (e);
         }
-        return selField + gby + have ;
+        return gby + have ;
     }
     isField(element){
         return element==='_field'?true:false;
     }
     getHaving(havingOptions){
-        var retval = '';
         var fieldName = '';
         var condition = '';
         if(havingOptions){
@@ -152,39 +209,48 @@ class Analytics{
                 }
             })
         }
-        return ' having ' + fieldName + ' ' + condition;
+        return ` HAVING ${fieldName} ${condition}`;
     }        
-    getFieldNames(fieldNames,foreignTable){
+    getFieldNames(fieldNames){
         var returnFields='';
+        var foreignTable='';
         fieldNames.forEach(element => {
-            var temp =JSON.stringify(element._name)
-            if(temp.indexOf('_local')>0){
+            var fieldName =JSON.stringify(element._name)
+            
+            if(fieldName.indexOf('_local')>0){
                 if (!element._alias){
                     returnFields = returnFields + this.tableName + '.' 
-                    + temp.substr(temp.indexOf('.')+1,temp.length-1).replace("\"","") +',';
+                    + this.isAll(this.stripFieldName(fieldName)) +',';
                 }else{
                     returnFields = returnFields + this.tableName + '.' 
-                    + temp.substr(temp.indexOf('.')+1,temp.length-1).replace("\"","") + ' as ' + element._alias + ' ,';
+                    + this.isAll(this.stripFieldName(fieldName)) + ' as ' + element._alias + ' ,';
                 }
-            }else if(temp.indexOf('_foreign')>0){
+            }else if(fieldName.indexOf('_foreign')>0){
+                foreignTable = this.getForeignTable(element._join)
                 if(!element._alias){
                     returnFields = returnFields +  foreignTable + '.' 
-                    + temp.substr(temp.indexOf('.')+1,temp.length-1).replace("\"","") +',';
+                    + this.isAll(this.stripFieldName(fieldName)) +',';
                 }else{
                     returnFields = returnFields +  foreignTable + '.' 
-                    + temp.substr(temp.indexOf('.')+1,temp.length-1).replace("\"","") + ' as ' + element._alias +' ,';
+                    + this.isAll(this.stripFieldName(fieldName)) + ' as ' + element._alias +' ,';
                 }
             }else{
                 if(!element._alias){
-                    returnFields += temp + ',';
+                    returnFields += this.isAll(fieldName) + ',';
                 }else{
-                    returnFields += temp + ' as ' + element._alias + ',';    
+                    returnFields += this.isAll(fieldName) + ' as ' + element._alias + ' ,';    
                 }
                 
             }
         });
         returnFields = returnFields.substr(0, returnFields.length - 1);
         return returnFields;
+    }
+    stripFieldName(inputString){
+        return inputString.substr(inputString.indexOf('.')+1,inputString.length).replace(/"/g,'')
+    }
+    isAll(fieldName){
+        return fieldName==='all'?'*':fieldName;
     }
     isAggregateFunc(func){
         var retval=false
@@ -199,14 +265,13 @@ class Analytics{
     getAggregateFunction(aggOptions, groupByOptions){
         var returnVal='';
         Object.getOwnPropertyNames(groupByOptions).map(element=>{
-            
             if(element === aggOptions){
                 try{
                     if(!groupByOptions[element]._alias){
                         returnVal=this.getAggStmt(element, groupByOptions[element]._field);
                     }else{
                         returnVal=this.getAggStmt(element, groupByOptions[element]._field);
-                        returnVal = returnVal + ' as ' + groupByOptions[element]._alias;
+                        returnVal = `${returnVal}  as ${groupByOptions[element]._alias}`;
                     }
                 }catch(e){
                     throw(e)
@@ -219,19 +284,29 @@ class Analytics{
         var returnVal = '';
         switch(options){
             case '_max':
-                returnVal = ' max('+fieldName+') ';
+                returnVal = ` max(${fieldName}) `;
                 break;
             case '_sum':
-                returnVal = ' sum('+fieldName+') ';
+                returnVal = ` sum(${fieldName}) `;
                 break;
             case '_count':
-                returnVal = ' count('+fieldName+') ';
+                returnVal = ` count(${fieldName}) `;
                 break;
         }
         return returnVal;
     }
-    getForeignTable(modelName){
-
+    getForeignTable(joinSeq){
+        var tableName='';
+        if(this.options._join){
+            this.options._join.forEach(element=>{
+                if(element._name===joinSeq){
+                    tableName = element._foreignTable
+                }
+            })
+        }else{
+            throw("join options are not provided")
+        }
+        return tableName;
     }
 }
 module.exports=Analytics;
