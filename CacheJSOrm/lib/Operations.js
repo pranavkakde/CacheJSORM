@@ -122,6 +122,15 @@ class TableMapping extends DriverManager{
     }
     //create join functions
     join(options, callback){
+        /*this.prototype.limit = function(start,end){
+            if(start===0){
+                throw("provide a value for limiting query results")
+            }else if((this.config.driverType==='mssql' || this.config.driverType==='pg') && end!=0){
+                throw("end limit is only applicable for mysql driver")
+            }else{
+
+            }
+        }*/
         var query = this.analytics.aggregate(options);
         super.runSQL(query,function(err,data){
             if (err){
@@ -130,7 +139,7 @@ class TableMapping extends DriverManager{
                 callback(data)
             }
         })
-    }
+    }    
 }
 
 module.exports=TableMapping;
