@@ -2,14 +2,14 @@ var orderModel = require('./testModel/orderModel')
 var customerModel = require('./testModel/customerModel')
 
 var config={
-    driverType: "mssql",    
-    server:'servername',
+    driverType: "mssql",
+    server:'hostname',
     database:'OrderDB',
-    username:'username',
-    password: 'pass',
-    cacheDuration: 10,
+    username:'nodeuser',
+    password: 'nodeuser',
+    cacheDuration: 0,
     driverOptions:{            
-        trustedConnection: true
+        trustedConnection: false
     }
 }
 
