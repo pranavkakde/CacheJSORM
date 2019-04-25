@@ -9,13 +9,15 @@ var config={
     password: 'abc1234',
     cacheDuration: 0,
     driverOptions:{            
-        trustedConnection: false
+        //trustedConnection: false
+        //connectionPoolLimit: 10
     }
 }
 
 orderModel.setConfig(config);
+customerModel.setConfig(config);
 
-orderModel.find({OrderNumber: '542477'},function(err,data){
+orderModel.find({OrderNumber: '10100'},function(err,data){
     if(err){
         console.log(err);
     }else{
@@ -25,28 +27,28 @@ orderModel.find({OrderNumber: '542477'},function(err,data){
 orderModel.join(
     {
         _join: [{
-            _localkey: 'customerid',
-            _foreignkey: 'id',
-            _foreignTable: 'dbo.[customer]',
+            _localkey: 'customerNumber',
+            _foreignkey: 'customerNumber',
+            _foreignTable: 'customers',
             _type: 'inner',
             _name: '$join1'
         },
         {
-            _localkey: 'id',
-            _foreignkey: 'OrderId',
-            _foreignTable: 'dbo.[OrderItem]',
+            _localkey: 'orderNumber',
+            _foreignkey: 'orderNumber',
+            _foreignTable: 'orderdetails',
             _type: 'left',
             _name: '$join2'
         }],
         _field: 
                 [
                     {
-                        _name: '_local.OrderNumber',
+                        _name: '_local.orderNumber',
                         _alias: 'OrderNum',
                     },
                     {
-                        _name: '_foreign.FirstName',
-                        _alias: 'CustomerName',
+                        _name: '_foreign.contactFirstName',
+                        _alias: 'customerName',
                         _join: '$join1'
                     },
                     {
@@ -56,28 +58,27 @@ orderModel.join(
                 ],
         _filter: [
             {
-                _field:[{_name:'_foreign.id', _join: '$join1'}],
-                _eq:'85'
-            },
-            {
-                _field:[{_name:'_local.TotalAmount'}],
-                _gteq:'400'
+                _field:[{_name:'_foreign.customerNumber', _join: '$join1'}],
+                _eq:'181'
             }
         ],
         _order: {
             _field: 
                 [
                     {
-                        _name: '_local.OrderNumber',
+                        _name: '_local.orderNumber',
                     },
                     {
-                        _name: '_foreign.FirstName',
+                        _name: '_foreign.contactFirstName',
                         _join: '$join1'
                     }
                 ],
             _mode: 'desc'
         }/*,
-        _top:{_row:2}*/
+        _limit:{
+            _offset: 2,
+            _count: 4
+        }*/
     },
     function(err,data){
         if(err){
@@ -87,43 +88,19 @@ orderModel.join(
         }
     }
 )
-orderModel.aggregate(
+customerModel.aggregate(
     {
         _sum:{
-            _field: 'TotalAmount',
+            _field: 'creditLimit',
             _alias: 'MaxAmount'
         },
         _group: {
                 _by: {
-                    _field: [{_name:'customerId'}]
-                },
-                _having:{
-                    _field:[{_name:'customerId'}],
-                    _eq:'10'
-                }
-            }
-        }
-    ,function(err,data){
-        if(err){
-            console.log(err);
-        }else{
-            console.log(data);
-        }
-});
-
-orderModel.aggregate(
-    {
-        _sum:{
-            _field: 'TotalAmount',
-            _alias: 'MaxAmount'
-        },
-        _group: {
-                _by: {
-                    _field: [{_name:'customerId'}]
+                    _field: [{_name:'country'}]
                 },
                 _having:{
                     _max: {
-                        _field: 'TotalAmount'
+                        _field: 'creditLimit'
                     },
                     _gt: '500'
                 }

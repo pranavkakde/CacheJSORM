@@ -1,8 +1,14 @@
 var table = require('../CacheJSOrm/Schema/Schema')
 var tableMapping = require('../CacheJSOrm/lib/Operations')
 
-var sch = new table({_id: {type: Number}, name: {type: String}, serviceEndpoint: {type: String}, resourceName:{type:String}});
+var sch = new table(
+    {
+        _id: {type: Number}, 
+        name: {type: String}, 
+        serviceEndpoint: {type: String}, 
+        resourceName:{type:String}
+    });
 
-var tabModel = new tableMapping("Services", sch);
+var tabModel = new tableMapping("ServiceList", sch);
 
 module.exports=tabModel;

@@ -23,14 +23,15 @@ var accessLogStream = rfs('access.log', {
 app.use(morgan('combined', { stream: accessLogStream }))
 
 var config={
-    driverType: "mssql",    
-    server:'servername',
-    database:'OrderDB',
-    username:'username',
-    password: 'pass',
+    driverType: "mysql",    
+    server:'192.168.20.13',
+    database:'classicmodels',
+    username:'pranav',
+    password: 'abc1234',
     cacheDuration: 10,
-    driverOptions:{            
-        trustedConnection: false
+    driverOptions:{
+        connectionPoolLimit: 10,
+        //trustedConnection: false
     }
 }
 //api for get data from database  
@@ -66,7 +67,7 @@ app.delete("/test/:id",function(req,res){
 })  
 app.put("/test/",function(req,res){   
     tabModel.setConfig(config);
-    tabModel.update({name:req.body.name},{serviceEndpoint:req.body.serviceEndpoint, resourceName:req.body.resourceName},function(err,data){        
+    tabModel.update({name:req.body.name},{serviceEndpoint:req.body.serviceEndpoint, resourceName:req.body.resourceName, _id:req.body._id},function(err,data){        
         if(err){
             res.send(err);
         }else{
