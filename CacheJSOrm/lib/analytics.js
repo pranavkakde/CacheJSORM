@@ -23,11 +23,10 @@ class Analytics{
         var toprow='';
         var groupclause='';
         this.options=options;
-        
+        var limit='';
         var orderby = '';
         var sqlString = '';
         Object.getOwnPropertyNames(options).map(clausename=>{
-            //retVal = this.setupSQLClause(element);
             if (this.isAggregateFunc(clausename)){
                 selList = this.getAggregateFunction(clausename, this.options);
             }else{
@@ -53,10 +52,20 @@ class Analytics{
                         else
                             whereclause += this.getFilter(this.options._filter,this.options._join._foreignTable);
                     case '_top':
-                        toprow = ` top ${this.options._top._row} `
+                        if (this.options._top){
+                            toprow = ` top ${this.options._top._row} `
+                        }
                         break;
                     case '_limit':
-    
+                        if (this.options._limit){
+                            if(this.options._limit._offset && this.options._limit._count){
+                                limit =` LIMIT ${this.options._limit._offset} , ${this.options._limit._count}`
+                            }else if(this.options._limit._count && !this.options._limit._offset){   
+                                limit = ` LIMIT ${this.options._limit._count}`
+                            }else{
+                                throw("No valid options provided for LIMIT clause");
+                            }
+                        }
                         break;
                     default:
                         throw(`option ${clausename} is not configured `)
@@ -67,10 +76,8 @@ class Analytics{
         if (whereclause!=''){
             whereclause = ` Where ${whereclause}`
         }
-        console.log('SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause)
-        return 'SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause
-        //console.log(sqlString + ' ' + orderby)
-        //return sqlString + ' ' + orderby;
+        console.log('SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit +' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause)
+        return 'SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause
     }
     
     getOrderBy(allOptions){
