@@ -3,10 +3,10 @@ var customerModel = require('./testModel/customerModel')
 
 var config={
     driverType: "mysql",
-    server:'192.168.20.13',
-    database:'classicmodels',
-    username:'pranav',
-    password: 'abc1234',
+    server:'server',
+    database:'db',
+    username:'username',
+    password: 'password',
     cacheDuration: 0,
     driverOptions:{            
         trustedConnection: false
