@@ -24,10 +24,10 @@ app.use(morgan('combined', { stream: accessLogStream }))
 
 var config={
     driverType: "mysql",    
-    server:'192.168.20.13',
-    database:'classicmodels',
-    username:'pranav',
-    password: 'abc1234',
+    server:'server',
+    database:'databas',
+    username:'username',
+    password: 'password',
     cacheDuration: 10,
     driverOptions:{
         connectionPoolLimit: 10,
