@@ -1,6 +1,5 @@
 require('../Schema/Schema');
 var queryBuilder = require('./queryBuilder/queryBulider');
-var sql =require("msnodesqlv8");
 var cs = require('../CacheManager/CacheStore');
 
 class Analytics{

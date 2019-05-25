@@ -23,15 +23,16 @@ var accessLogStream = rfs('access.log', {
 app.use(morgan('combined', { stream: accessLogStream }))
 
 var config={
-    driverType: "mysql",    
-    server:'server',
-    database:'databas',
+    driverType: "postgres",    
+    server:'servername',
+    database:'dbname',
     username:'username',
+    port:1234,
     password: 'password',
     cacheDuration: 10,
     driverOptions:{
         connectionPoolLimit: 10,
-        //trustedConnection: false
+        //trustedConnection: true
     }
 }
 //api for get data from database  
