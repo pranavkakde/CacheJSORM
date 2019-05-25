@@ -1,10 +1,8 @@
 
 # CacheJSORM
 
-A JavaScript ORM with caching and connection pooling (mysql) support.
-It supports multiple databases and drivers e.g. mssql and mysql.
-
-Note: Postgress support is in progress.
+A JavaScript ORM with caching and connection pooling support.
+It supports multiple databases like mssql, mysql and postgres.
 
 This repo contains library code for ORM and examples to use this library. 
 
