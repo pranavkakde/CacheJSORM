@@ -24,7 +24,7 @@ After installing this package;
 1. create a model with table and field discription.
 
 
-`
+```
     var table = require('cachejsorm').TableSchema
     var tableMapping = require('cachejsorm').TableMapper
     var mssqlTable ='dbo.[orders]';
@@ -37,7 +37,7 @@ After installing this package;
     );
     var tabModel = new tableMapping(mssqlTable, schema);
     module.exports=tabModel;
-`
+```
 
 
 2. create a test.js
@@ -46,7 +46,7 @@ After installing this package;
    3. use functions from package for CRUD, join and aggregate function. refer to following example.   
 
 
-`
+```
 var orderModel = require('./testmodel')
 //setup configuration
 var config={    
@@ -62,9 +62,9 @@ var config={
     }
 }
 orderModel.setConfig(config);
-`
+```
 #####CRUD Operation 
-`
+```
 //find based on column values 
 orderModel.find({OrderNumber: '123'},function(err,data){
     if(err){
@@ -109,9 +109,9 @@ orderModel.insert({OrderQuantity:1, orderDate:'2019-01-01', customerNumber:111},
             res.send(data);
         }
     });
-`
+```
 #####Join Conditions (join types inner, outer, left and right)
-`
+```
 // use .join for joining multiple tables
 orderModel.join(
     {
@@ -178,7 +178,7 @@ orderModel.join(
         }
     }
 )
-`
+```
 Above function produces following SQL Query internally to retrieve from DB;
 
 _SELECT  top 2 orders.OrderNumber as OrderNum ,dbo.[customer].FirstName as CustomerName ,dbo.[OrderItem].* 
@@ -191,7 +191,7 @@ Order By orders.OrderNumber, dbo.[customer].FirstName desc_
 
 
 #####Aggregate Operations (_sum, _count, _max, _min)
-`
+```
 //Use .aggregate for _sum , _count, _max and _min functions
 orderModel.aggregate(
     {
@@ -216,11 +216,11 @@ orderModel.aggregate(
             console.log(data);
         }
 });
-`
+```
 Above function produces following SQL Query internally;
 
 _SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING customerId = 10_
-`
+```
 orderModel.aggregate(
     {
         _sum:{
@@ -246,7 +246,7 @@ orderModel.aggregate(
             console.log(data);
         }
 });
-`
+```
 Above function produces following SQL internally;
 
 _SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING  max(TotalAmount) > 500_
