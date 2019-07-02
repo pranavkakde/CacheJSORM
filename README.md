@@ -63,7 +63,7 @@ var config={
 }
 orderModel.setConfig(config);
 ```
-**CRUD Operation
+**CRUD Operation**
 ```
 //find based on column values 
 orderModel.find({OrderNumber: '123'},function(err,data){
@@ -110,7 +110,7 @@ orderModel.insert({OrderQuantity:1, orderDate:'2019-01-01', customerNumber:111},
         }
     });
 ```
-**Join Conditions (join types inner, outer, left and right)
+**Join Conditions (join types inner, outer, left and right)**
 ```
 // use .join for joining multiple tables
 orderModel.join(
@@ -190,7 +190,7 @@ and orders.TotalAmount >= 400
 Order By orders.OrderNumber, dbo.[customer].FirstName desc_
 
 
-**Aggregate Operations (_sum, _count, _max, _min)
+**Aggregate Operations (_sum, _count, _max, _min)**
 ```
 //Use .aggregate for _sum , _count, _max and _min functions
 orderModel.aggregate(
@@ -217,7 +217,7 @@ orderModel.aggregate(
         }
 });
 ```
-**Above function produces following SQL Query internally;
+Above function produces following SQL Query internally;
 
 _SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING customerId = 10_
 ```
@@ -247,8 +247,8 @@ orderModel.aggregate(
         }
 });
 ```
-**Above function produces following SQL internally;
+Above function produces following SQL internally;
 
-_SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING  max(TotalAmount) > 500
+_SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING  max(TotalAmount) > 500_
 
 3. run node test.js
