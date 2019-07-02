@@ -260,7 +260,7 @@ class Analytics{
     }
     isAggregateFunc(func){
         var retval=false
-        var xmap =['_max','_sum','_count']
+        var xmap =['_max','_sum','_count','_min']
         xmap.forEach(element =>{
             if(func===element){
                 retval=true
@@ -297,6 +297,9 @@ class Analytics{
                 break;
             case '_count':
                 returnVal = ` count(${fieldName}) `;
+                break;
+            case '_min':
+                returnVal = ` min(${fieldName}) `;
                 break;
         }
         return returnVal;
