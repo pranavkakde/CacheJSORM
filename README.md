@@ -1,6 +1,7 @@
 
 # CacheJSORM
 
+
 A JavaScript ORM with caching and connection pooling support. It supports CRUD operations and aggeration(group, order, outer join, left join, right join, inner join, top, limit for mysql, max, min, sum, count) for mssql, mysql and postgres.
 
 This repo contains library code for ORM and examples to use this library. 
@@ -39,7 +40,8 @@ After installing this package;
         }
     );
     var tabModel = new tableMapping(mssqlTable, schema);
-    module.exports=tabModel;`
+    module.exports=tabModel;
+    ```
 
 
 2. Create a test.js
@@ -222,9 +224,11 @@ orderModel.aggregate(
 });
 ```
 Above function produces following SQL Query internally;
+
 ```sql
 SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING customerId = 10
 ```
+
 ```javascript
 orderModel.aggregate(
     {
