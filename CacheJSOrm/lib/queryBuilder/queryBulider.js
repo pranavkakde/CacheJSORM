@@ -17,13 +17,13 @@ class QueryBuilder{
             if (condition!= null){
                 query = 'DELETE from ' + this.tableName +  ' where '  + condition;
             }else{
-                //query = 'DELETE from ' + this.tableName +; to be tested in the end
+                query = 'DELETE from ' + this.tableName;
             }            
         }else if(queryType==='UPDATE'){
             if (condition!= null){
                 query = 'UPDATE ' + this.tableName +  params + ' where ' + condition;
             }else{
-                //query = 'SELECT ' + params + ' ' + this.tableName; to be tested in the end
+                query = 'SELECT ' + params + ' ' + this.tableName;
             }            
         }else if(queryType==='INSERT'){
             query ='INSERT INTO ' + this.tableName + ' '  + condition;
@@ -51,11 +51,12 @@ class QueryBuilder{
     getType(fieldName){
         var names = Object.getOwnPropertyNames(this.schema.DefJson);
         var dataType;
-        names.map((value)=>{
-            if (fieldName = this.schema.DefJson[value]){
-                dataType = this.schema.DefJson[value].type;
+        for (var i=0;i<names.length;i++){
+            if (fieldName == names[i]){
+                dataType = this.schema.DefJson[names[i]].type;
+                break;
             }
-        });
+        }
         return dataType;
     }
 
@@ -73,7 +74,6 @@ class QueryBuilder{
                 valueString += "'" + condition[key] + "', ";
             }            
         })
-        console.log(nameString, valueString);
         nameString = nameString.substr(0,nameString.length-2);
         valueString = valueString.substr(0,valueString.length-2);
         return "( " + nameString + " ) values ( " + valueString +" )" ; 
@@ -91,7 +91,6 @@ class QueryBuilder{
                 dataString += key + " = '" + dateset[key] + "', ";
             }            
         })
-        console.log(dataString);        
         dataString = dataString.substr(0,dataString.length-2);
         return " SET " + dataString; 
     };

@@ -23,8 +23,12 @@ After installing this package;
 
 1. create a model with table and field discription.
 
+After installing this package;
 
-```
+1. Create a model with table and field details.
+
+
+    ```javascript
     var table = require('cachejsorm').TableSchema
     var tableMapping = require('cachejsorm').TableMapper
     var mssqlTable ='dbo.[orders]';
@@ -37,22 +41,24 @@ After installing this package;
     );
     var tabModel = new tableMapping(mssqlTable, schema);
     module.exports=tabModel;
-```
+    ```
 
 
-2. create a test.js
-   1. call model in test.js
-   2. setup connection details
-   3. use functions from package for CRUD, join and aggregate function. refer to following example.   
+2. Create a test.js
+   1. Call model in test.js
+   2. Setup connection details
+   3. Use functions from package for CRUD, join and aggregate functions.
 
+Refer to following examples;
 
-```
+```javascript
 var orderModel = require('./testmodel')
 //setup configuration
 var config={    
     driverType: "mssql",    //supports mysql/mssql/pg    
     server:'serverip',
     database:'databasename',
+    port: 1433,
     username:'username',
     password: 'password',
     cacheDuration: 10,      //duration in seconds
@@ -63,8 +69,8 @@ var config={
 }
 orderModel.setConfig(config);
 ```
-**CRUD Operation**
-```
+#####CRUD Operation 
+```javascript
 //find based on column values 
 orderModel.find({OrderNumber: '123'},function(err,data){
     if(err){
@@ -110,8 +116,8 @@ orderModel.insert({OrderQuantity:1, orderDate:'2019-01-01', customerNumber:111},
         }
     });
 ```
-**Join Conditions (join types inner, outer, left and right)**
-```
+#####Join Conditions (join types inner, outer, left and right)
+```javascript
 // use .join for joining multiple tables
 orderModel.join(
     {
@@ -180,18 +186,18 @@ orderModel.join(
 )
 ```
 Above function produces following SQL Query internally to retrieve from DB;
-
-_SELECT  top 2 orders.OrderNumber as OrderNum ,dbo.[customer].FirstName as CustomerName ,dbo.[OrderItem].* 
+```sql
+SELECT  top 2 orders.OrderNumber as OrderNum ,dbo.[customer].FirstName as CustomerName ,dbo.[OrderItem].* 
 FROM orders 
 INNER JOIN dbo.[customer] ON orders.customerid=dbo.[customer].id 
 LEFT JOIN dbo.[OrderItem] ON orders.id=dbo.[OrderItem].OrderId  
 Where dbo.[customer].id = 85 
 and orders.TotalAmount >= 400  
-Order By orders.OrderNumber, dbo.[customer].FirstName desc_
-
-
-**Aggregate Operations (_sum, _count, _max, _min)**
+Order By orders.OrderNumber, dbo.[customer].FirstName desc
 ```
+
+#####Aggregate Operations (_sum, _count, _max, _min)
+```javascript
 //Use .aggregate for _sum , _count, _max and _min functions
 orderModel.aggregate(
     {
@@ -219,8 +225,11 @@ orderModel.aggregate(
 ```
 Above function produces following SQL Query internally;
 
-_SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING customerId = 10_
+```sql
+SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING customerId = 10
 ```
+
+```javascript
 orderModel.aggregate(
     {
         _sum:{
@@ -249,6 +258,8 @@ orderModel.aggregate(
 ```
 Above function produces following SQL internally;
 
-_SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING  max(TotalAmount) > 500_
+```sql
+SELECT sum(TotalAmount) as MaxAmount FROM orders group by customerId HAVING  max(TotalAmount) > 500
+```
 
 3. run node test.js

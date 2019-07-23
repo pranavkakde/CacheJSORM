@@ -11,14 +11,14 @@ const runQuery=(connection, sqlQuery, callback)=>{
         });
         conPool.getConnection(function(err, con) {
             if (err){
-                callback(err)
+                callback(err, null)
             } 
             con.query(sqlQuery, function (err, result) {
                 con.destroy();
                 if (err) 
-                    callback(err)
+                    callback(err, null)
                 else
-                    callback(result)
+                    callback(null, result)
             });
         });
     }else{
@@ -32,9 +32,9 @@ const runQuery=(connection, sqlQuery, callback)=>{
         con.query(sqlQuery, function (err, result) {
             con.destroy();
             if (err) 
-                callback(err)
+                callback(err,null)
             else
-                callback(result)
+                callback(null,result)
         });
     }
     

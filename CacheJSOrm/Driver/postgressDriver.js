@@ -10,9 +10,9 @@ const runQuery=(connection, sqlQuery, callback)=>{
         con.query(sqlQuery, function (err, result) {
             con.end();
             if (err) 
-                callback(err)
+                callback(err, null)
             else
-                callback(result)
+                callback(null, result)
         });
     
 }

@@ -1,7 +1,7 @@
 var orderModel = require('./testModel/orderModel')
 var customerModel = require('./testModel/customerModel')
-
-var config={
+var tabModel = require('./testModel/model')
+/*var config={
     driverType: "mysql",
     server:'server',
     database:'db',
@@ -11,11 +11,23 @@ var config={
     driverOptions:{            
         trustedConnection: false
     }
+}*/
+var config={
+    driverType: "mssql",    
+    server:'LAPTOP-92EUUT9O\\SQLEXPRESS',
+    database:'TMTool',
+    username:'pranav',
+    //password: 'abc1234',
+    cacheDuration: 0,
+    driverOptions:{
+        //connectionPoolLimit: 10,
+        trustedConnection: true
+    }
 }
 
 orderModel.setConfig(config);
-
-orderModel.find({OrderNumber: '542477'},function(err,data){
+tabModel.setConfig(config);
+tabModel.find({UserId: 1},function(err,data){
     if(err){
         console.log(err);
     }else{
