@@ -75,7 +75,7 @@ class Analytics{
         if (whereclause!=''){
             whereclause = ` Where ${whereclause}`
         }
-        console.log('SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit +' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause)
+        //console.log('SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit +' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause)
         return 'SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause
     }
     

@@ -1,4 +1,4 @@
-log/access.log
+/log/*.log
 /node_modules/
 *.sql
 examples.txt

@@ -45,9 +45,9 @@ class DriverManager{
             case 'mysql':
                 mysql(this.connectionString,query,(err,data)=>{
                     if(err){
-                        callback(err)
+                        callback(err, null)
                     }else{
-                        callback(data)
+                        callback(null, data)
                     }
                     
                 })
@@ -55,18 +55,18 @@ class DriverManager{
             case 'mssql':
                 mssql(this.connectionString,query,(err,data)=>{
                     if(err){
-                        callback(err)
+                        callback(err, null)
                     }else{
-                        callback(data)
+                        callback(null, data)
                     }
                 })
             break;
             case 'postgres':
                 postg(this.connectionString,query,(err,data)=>{
                     if(err){
-                        callback(err)
+                        callback(err, null)
                     }else{
-                        callback(data)
+                        callback(null, data)
                     }
                 })
             break;

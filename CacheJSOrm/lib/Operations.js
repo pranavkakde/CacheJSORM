@@ -1,4 +1,4 @@
- require('../Schema/Schema');
+require('../Schema/Schema');
 var queryBuilder = require('./queryBuilder/queryBulider');
 var DriverManager =require('../Driver/driverManager')
 var cs = require('../CacheManager/CacheStore');
@@ -47,12 +47,11 @@ class TableMapping extends DriverManager{
             }else{
                 var query = this.queryManager.queryBuilder("SELECT", "*", null);
             }
-            //console.log(query)
             super.runSQL(query,function(err,data){
                 if (err){
-                    callback(err)
+                    callback(err, null)
                 }else{
-                    callback(data)
+                    callback(null, data)
                 }
             })
         }
@@ -67,9 +66,9 @@ class TableMapping extends DriverManager{
         console.log(query);
         super.runSQL(query,function(err,data){
             if (err){
-                callback(err)
+                callback(err, null)
             }else{
-                callback(data)
+                callback(null, data)
             }
         })
     }
@@ -83,9 +82,9 @@ class TableMapping extends DriverManager{
         console.log(query);
         super.runSQL(query,function(err,data){
             if (err){
-                callback(err)
+                callback(err, null)
             }else{
-                callback(data)
+                callback(null,data)
             }
         })
     }
@@ -99,9 +98,9 @@ class TableMapping extends DriverManager{
         console.log("query = " +query);
         super.runSQL(query,function(err,data){
             if (err){
-                callback(err)
+                callback(err, null)
             }else{
-                callback(data)
+                callback(null,data)
             }
         })
     }
@@ -114,9 +113,9 @@ class TableMapping extends DriverManager{
         var query = this.analytics.aggregate(options);
         super.runSQL(query,function(err,data){
             if (err){
-                callback(err)
+                callback(err, null)
             }else{
-                callback(data)
+                callback(null, data)
             }
         })
     }
@@ -134,9 +133,9 @@ class TableMapping extends DriverManager{
         var query = this.analytics.aggregate(options);
         super.runSQL(query,function(err,data){
             if (err){
-                callback(err)
+                callback(err, null)
             }else{
-                callback(data)
+                callback(null, data)
             }
         })
     }    

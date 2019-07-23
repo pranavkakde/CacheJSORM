@@ -1,12 +1,18 @@
 var sql = require("msnodesqlv8");
 
 const runQuery=(connectionString, sqlQuery, callback)=>{
-    sql.query(connectionString, sqlQuery, (err, rows) => {
+    sql.open(connectionString, (err, con)=> {
         if(err){
-            callback(err);
+            callback(err)
         }else{
-            callback(rows);
-        }            
-    });
+            con.query(sqlQuery, (err, rows) => {
+                if(err){
+                    callback(err, null);
+                }else{
+                    callback(null,rows);
+                }            
+            });
+        }
+    })
 }
 module.exports = runQuery;
