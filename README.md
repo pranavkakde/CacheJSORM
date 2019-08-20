@@ -1,3 +1,4 @@
+![npm](https://img.shields.io/npm/v/cachejsorm)
 
 # CacheJSORM
 
