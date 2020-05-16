@@ -27,7 +27,7 @@
     "morgan": "^1.9.1",
     "msnodesqlv8": "^0.6.12",
     "mysql": "^2.16.0",
-    "nodemon": "^1.18.10",
+    "nodemon": "^2.0.4",
     "rotating-file-stream": "^1.4.0",
     "serve-static": "^1.13.2"
   },
