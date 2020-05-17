@@ -14,14 +14,15 @@ var tabModel = require('./testModel/model')
 }*/
 var config={
     driverType: "mssql",    
-    server:'LAPTOP-92EUUT9O\\SQLEXPRESS',
-    database:'TMTool',
-    username:'pranav',
-    //password: 'abc1234',
+    server:'192.168.20.11\\SQLEXPRESS',
+    database:'xxxx',
+    username:'xxxx',
+    password: 'xxxx',
+    port: 1433,
     cacheDuration: 0,
     driverOptions:{
         //connectionPoolLimit: 10,
-        trustedConnection: true
+        trustedConnection: false
     }
 }
 

@@ -29,10 +29,10 @@ class TableMapping extends DriverManager{
       
     //get rows
     find(condition,callback){
-        var cacheKey='';
+        var cacheKey='';        
         if (condition){
             var temp='';
-            Object.getOwnPropertyNames(condition).map(element=>{
+            Object.getOwnPropertyNames(condition).map(element=>{                
                 temp+=element;
             })
             cacheKey='find_'+this.tableName+this.config.database+temp;
@@ -42,11 +42,11 @@ class TableMapping extends DriverManager{
         if(this.isCached(cacheKey)){
             callback(this.cacheData.value);
         }else{
-            if(condition){
+            if(condition){                
                 var query = this.queryManager.queryBuilder("SELECT", "*", this.queryManager.getCondition(condition));
             }else{
                 var query = this.queryManager.queryBuilder("SELECT", "*", null);
-            }
+            }            
             super.runSQL(query,function(err,data){
                 if (err){
                     callback(err, null)
@@ -61,7 +61,7 @@ class TableMapping extends DriverManager{
         if(condition){
             var query = this.queryManager.queryBuilder("DELETE", "*", this.queryManager.getCondition(condition));
         }else{
-            //var query = this.queryBuilder("DELETE", "*", null);
+            var query = this.queryBuilder("DELETE", "*", null);
         }
         console.log(query);
         super.runSQL(query,function(err,data){
@@ -78,8 +78,7 @@ class TableMapping extends DriverManager{
             var query = this.queryManager.queryBuilder("INSERT", "*", this.queryManager.buildInsertQuery(dateset));
         }else{
             throw "No dataset available to insert";
-        }
-        console.log(query);
+        }        
         super.runSQL(query,function(err,data){
             if (err){
                 callback(err, null)
@@ -94,8 +93,7 @@ class TableMapping extends DriverManager{
             var query = this.queryManager.queryBuilder("UPDATE", this.queryManager.getUpdateParams(dataset), this.queryManager.getCondition(keyfields));
         }else{
             throw "No dataset available to insert";
-        }
-        console.log("query = " +query);
+        }        
         super.runSQL(query,function(err,data){
             if (err){
                 callback(err, null)
@@ -121,7 +119,7 @@ class TableMapping extends DriverManager{
     }
     //create join functions
     join(options, callback){
-        /*this.prototype.limit = function(start,end){
+        /* this.prototype.limit = function(start,end){
             if(start===0){
                 throw("provide a value for limiting query results")
             }else if((this.config.driverType==='mssql' || this.config.driverType==='pg') && end!=0){
@@ -129,7 +127,7 @@ class TableMapping extends DriverManager{
             }else{
 
             }
-        }*/
+        } */
         var query = this.analytics.aggregate(options);
         super.runSQL(query,function(err,data){
             if (err){

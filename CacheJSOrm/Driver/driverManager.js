@@ -18,9 +18,20 @@ class DriverManager{
         var conLimit = this.config.driverOptions.connectionPoolLimit;
         if(this.config.driverType==='mssql'){
             if(this.config.driverOptions.trustedConnection===true){
-                this.connectionString = "server="+server+";Database="+db+";Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
+                this.connectionString = "Server="+server+";Database="+db+";Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
             }else{
-                this.connectionString = "server="+server+";port="+port+";Database="+db+";Uid="+user+";Pwd="+password+";Driver={SQL Server Native Client 11.0}";
+                //this.connectionString = "server="+server+";port="+port+";Database="+db+";Uid="+user+";Pwd="+password+";Driver={SQL Server Native Client 11.0}";
+                this.connectionString = {
+                    "user": user,
+                    "password": password,
+                    "server": server,
+                    "database": db,
+                    "port": port,
+                    "dialect": "mssql",
+                    "pool": {
+                        idleTimeoutMillis: 3000
+                    }
+                }
             }            
         }else if(this.config.driverType==='mysql'){
             if(conLimit)
@@ -39,7 +50,6 @@ class DriverManager{
         }
     }
     runSQL(query,callback){
-        var results;
         this.connect();
         switch (this.config.driverType){
             case 'mysql':

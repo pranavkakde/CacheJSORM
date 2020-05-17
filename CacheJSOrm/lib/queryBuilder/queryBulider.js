@@ -35,7 +35,7 @@ class QueryBuilder{
         var names = Object.getOwnPropertyNames(condition);
         var cond = '';        
         names.map((value)=>{
-            var dataType = this.getType(value);
+            var dataType = this.getType(value);            
             if(dataType===Number){
                 cond = value + ' = ' +condition[value] + ' and ' + cond;
             }else if(dataType===String){
@@ -43,7 +43,7 @@ class QueryBuilder{
             }
             
         })
-        cond = cond.substr(0,cond.length-5);        
+        cond = cond.substr(0,cond.length-5);                
         return cond;  
     }
 

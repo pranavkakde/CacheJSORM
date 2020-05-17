@@ -22,9 +22,7 @@ class Analytics{
         var toprow='';
         var groupclause='';
         this.options=options;
-        var limit='';
-        var orderby = '';
-        var sqlString = '';
+        var limit='';        
         Object.getOwnPropertyNames(options).map(clausename=>{
             if (this.isAggregateFunc(clausename)){
                 selList = this.getAggregateFunction(clausename, this.options);
@@ -76,7 +74,7 @@ class Analytics{
             whereclause = ` Where ${whereclause}`
         }
         //console.log('SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit +' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause)
-        return 'SELECT ' + toprow + selList + ' FROM ' + this.tableName + ' ' + limit + ' ' + joinclause + ' ' + whereclause + ' ' + groupclause + ' ' + orderclause
+        return `SELECT ${toprow} ${selList} FROM ${this.tableName} ${limit} ${joinclause} ${whereclause} ${groupclause} ${orderclause}`
     }
     
     getOrderBy(allOptions){
@@ -93,7 +91,7 @@ class Analytics{
                     }
                 }
             })
-            orderStmt = 'Order By ' + fieldList + ' ' + orderOptions._mode
+            orderStmt = `Order By ${fieldList} ${orderOptions._mode}`
         }catch(e){
             throw (e);
         }
@@ -120,12 +118,12 @@ class Analytics{
                     default:
                         throw("join type is incorrect")
                 }
-                joinOn +=  ` ${joinType} JOIN ${element._foreignTable}  ON ` + this.tableName +'.' + element._localkey + '=' + element._foreignTable + '.' + element._foreignkey
+                joinOn +=  ` ${joinType} JOIN ${element._foreignTable} ON ${this.tableName}.${element._localkey} = ${element._foreignTable}.${element._foreignkey} `
             })
         }catch(e){
             throw (e);
         }
-        return  joinOn
+        return joinOn
     }
     getFilter(filterOptions,foreignTable){
         var where='';
@@ -154,19 +152,19 @@ class Analytics{
         var condition='';
         switch(element){
             case '_eq':
-                condition =  ' = ' + options._eq;
+                condition =  ` = ${options._eq}` ;
                 break;
             case '_ls':
-                condition = ' < ' + options._ls;
+                condition = ` < ${options._ls} `;
                 break;
             case '_gt':
-                condition = ' > ' + options._gt;
+                condition = ` > ${options._gt} `;
                 break;
             case '_gteq':
-                condition = ' >= ' + options._gteq;
+                condition = ` >= ${options._gteq} `;
                 break;
             case '_lseq':
-                condition = ' <= ' + options._lseq;
+                condition = ` <= ${options._lseq} `;
                 break;
         }
         return condition;
@@ -180,9 +178,9 @@ class Analytics{
                 switch(element){
                     case '_by':
                         if (allOptions._join){
-                            gby= ' group by ' + this.getFieldNames(groupByOptions._by._field, allOptions._join._foreignTable);
+                            gby= ` group by ${this.getFieldNames(groupByOptions._by._field, allOptions._join._foreignTable)}`;
                         }else{
-                            gby= ' group by ' + this.getFieldNames(groupByOptions._by._field);
+                            gby= ` group by ${this.getFieldNames(groupByOptions._by._field)}`;
                         }
                         
                         break;
@@ -196,7 +194,7 @@ class Analytics{
         }catch(e){
             throw (e);
         }
-        return gby + have ;
+        return `${gby} ${have}` ;
     }
     isField(element){
         return element==='_field'?true:false;
@@ -207,7 +205,7 @@ class Analytics{
         if(havingOptions){
             Object.getOwnPropertyNames(havingOptions).map(element=>{
                 if (this.isAggregateFunc(element)){
-                    fieldName = ' ' + this.getAggregateFunction(element, havingOptions);
+                    fieldName = ` ${this.getAggregateFunction(element, havingOptions)}`;
                 }else if(this.isField(element)){
                     fieldName = this.getFieldNames(havingOptions._field)
                 }else{
