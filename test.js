@@ -14,21 +14,21 @@ var tabModel = require('./testModel/model')
 }*/
 var config={
     driverType: "mssql",    
-    server:'192.168.20.11\\SQLEXPRESS',
-    database:'xxxx',
+    server:'xxxx',
+    database:'xxx',
     username:'xxxx',
     password: 'xxxx',
     port: 1433,
     cacheDuration: 0,
     driverOptions:{
         //connectionPoolLimit: 10,
-        trustedConnection: false
+        trustedConnection: true
     }
 }
 
 orderModel.setConfig(config);
 tabModel.setConfig(config);
-tabModel.find({UserId: 1},function(err,data){
+tabModel.find({UserId: 1},function(err,data){    
     if(err){
         console.log(err);
     }else{

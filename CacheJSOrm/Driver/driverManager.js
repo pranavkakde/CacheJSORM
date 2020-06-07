@@ -17,10 +17,14 @@ class DriverManager{
         var port = this.config.port;
         var conLimit = this.config.driverOptions.connectionPoolLimit;
         if(this.config.driverType==='mssql'){
-            if(this.config.driverOptions.trustedConnection===true){
-                this.connectionString = "Server="+server+";Database="+db+";Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
+            var isWindows = process.platform === "win32";
+            if(isWindows){    
+                if(this.config.driverOptions.trustedConnection===true){                                
+                    this.connectionString = {driver: 'msnodesqlv8', connectionString: `Server=${server};Database=${db};Trusted_Connection={Yes};Driver={SQL Server Native Client 11.0}`}               
+                }else{                
+                    this.connectionString = {driver: 'msnodesqlv8', connectionString: `Server=${server};Database=${db};Uid=${user};Pwd=${password};Trusted_Connection={Yes};Driver={SQL Server Native Client 11.0}`}                
+                }    
             }else{
-                //this.connectionString = "server="+server+";port="+port+";Database="+db+";Uid="+user+";Pwd="+password+";Driver={SQL Server Native Client 11.0}";
                 this.connectionString = {
                     "user": user,
                     "password": password,
@@ -32,7 +36,7 @@ class DriverManager{
                         idleTimeoutMillis: 3000
                     }
                 }
-            }            
+            }
         }else if(this.config.driverType==='mysql'){
             if(conLimit)
             {
