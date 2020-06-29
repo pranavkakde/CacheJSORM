@@ -14,10 +14,10 @@ var tabModel = require('./testModel/model')
 }*/
 var config={
     driverType: "mssql",    
-    server:'xxxx',
-    database:'xxx',
-    username:'xxxx',
-    password: 'xxxx',
+    server:'server',
+    database:'db',
+    username:'username',
+    password: 'password',
     port: 1433,
     cacheDuration: 0,
     driverOptions:{
@@ -28,13 +28,86 @@ var config={
 
 orderModel.setConfig(config);
 tabModel.setConfig(config);
-tabModel.find({UserId: 1},function(err,data){    
+orderModel.join(
+    {
+        _join: [{
+            _localkey: 'customerid',
+            _foreignkey: 'id',
+            _foreignTable: 'dbo.[customer]',
+            _type: 'inner',
+            _name: '$join1'
+        },
+        {
+            _localkey: 'id',
+            _foreignkey: 'OrderId',
+            _foreignTable: 'dbo.[OrderItem]',
+            _type: 'left',
+            _name: '$join2'
+        }],
+        _field: 
+                [
+                    {
+                        _name: '_local.OrderNumber',
+                        _alias: 'OrderNum',
+                    },
+                    {
+                        _name: '_foreign.FirstName',
+                        _alias: 'CustomerName',
+                        _join: '$join1'
+                    },
+                    {
+                        _name: '_foreign.all',
+                        _join: '$join2'
+                    }
+                ],
+        _filter: [
+            {
+                _field:[{_name:'_foreign.id', _join: '$join1'}],
+                _in:[1,2]
+            },
+            {
+                _field:[{_name:'_local.TotalAmount'}],
+                _gteq:'400'
+            }
+        ],
+        _order: {
+            _field: 
+                [
+                    {
+                        _name: '_local.OrderNumber',
+                    },
+                    {
+                        _name: '_foreign.FirstName',
+                        _join: '$join1'
+                    }
+                ],
+            _mode: 'desc'
+        },
+        _top:{_row:2}
+    },
+    function(err,data){
+        if(err){
+            console.log(err);
+        }else{
+            console.log(data);
+        }
+    }
+)
+/*tabModel.find({UserId: 1},function(err,data){    
     if(err){
         console.log(err);
     }else{
         console.log(data);
     }
 });
+tabModel.find({UserId: [1,2]},function(err,data){    
+    if(err){
+        console.log(err);
+    }else{
+        console.log(data);
+    }
+});
+
 orderModel.join(
     {
         _join: [{
@@ -149,3 +222,4 @@ orderModel.aggregate(
             console.log(data);
         }
 });
+*/

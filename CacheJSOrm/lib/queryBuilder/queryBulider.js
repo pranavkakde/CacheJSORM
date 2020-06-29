@@ -33,20 +33,28 @@ class QueryBuilder{
     //create condition
     getCondition(condition){        
         var names = Object.getOwnPropertyNames(condition);
-        var cond = '';        
-        names.map((value)=>{
-            var dataType = this.getType(value);            
-            if(dataType===Number){
-                cond = value + ' = ' +condition[value] + ' and ' + cond;
-            }else if(dataType===String){
-                cond = value + ' = \'' +condition[value] + '\' and ' + cond;
+        var cond = '';         
+        names.map((value)=>{            
+            var dataType = this.getType(value);
+            if(Array.isArray(condition[value])){
+                if(dataType===Number){
+                    cond = value + ' in (' +condition[value] + ') and ' + cond;
+                }else if(dataType===String){
+                    cond = value + ' in (' + condition[value].map((v)=>{
+                        return `\'${v}\'`;
+                    }) + ') and ' + cond;                    
+                }
+            }else{                
+                if(dataType===Number){
+                    cond = value + ' = ' +condition[value] + ' and ' + cond;
+                }else if(dataType===String){
+                    cond = value + ' = \'' +condition[value] + '\' and ' + cond;
+                }
             }
-            
-        })
+        });
         cond = cond.substr(0,cond.length-5);                
         return cond;  
-    }
-
+    }    
     //get dataType based on field name
     getType(fieldName){
         var names = Object.getOwnPropertyNames(this.schema.DefJson);
