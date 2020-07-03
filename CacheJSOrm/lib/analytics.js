@@ -148,6 +148,21 @@ class Analytics{
         });
         return fieldName + condition;
     }
+    setDataTypeForIn(arr){
+        return arr.map((v)=>{
+            switch (v) {
+                case typeof v=="number":
+                    return `${v}`
+                    break;
+                case typeof v=="string":
+                    return `\'${v}\'`
+                    break;
+                default:
+                    return v
+                    break;
+            }
+        });
+    }    
     getCondition(element,options){
         var condition='';
         switch(element){
@@ -165,6 +180,11 @@ class Analytics{
                 break;
             case '_lseq':
                 condition = ` <= ${options._lseq} `;
+                break;
+            case '_in':
+                var x = this.setDataTypeForIn(options._in);
+                console.log(x);
+                condition = ` in (${x} )`;
                 break;
         }
         return condition;
