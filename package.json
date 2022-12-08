@@ -19,9 +19,9 @@
   "author": "pranav kakde",
   "license": "MIT",
   "devDependencies": {
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.1",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "gulp": "^4.0.0",
     "gulp-zip": "^4.2.0",
     "mongoose": "^5.7.5",
